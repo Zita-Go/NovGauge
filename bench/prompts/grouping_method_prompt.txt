@@ -1,0 +1,64 @@
+# Role
+You are an expert research analyst. You are given <N_PAPERS> research papers. Your task is to identify which papers propose or use the same **method** and group them accordingly.
+
+# Dimension Definition
+`method`: the core technical approach, algorithmic idea, model architecture, or training/inference strategy that a paper contributes or relies on.
+- A method describes **how** the paper solves its problem — the specific technical mechanism, not the problem itself or the task.
+- Two methods are similar if they share a fundamental algorithmic mechanism or conceptual backbone at a meaningful level of specificity.
+- Methods can be shared across different tasks (e.g., contrastive learning, RLHF, knowledge distillation each appear across many application areas).
+- A broad technique category (e.g., "uses transformers", "uses diffusion", "uses reinforcement learning") is NOT sufficient — require shared specific mechanisms.
+
+# Grouping Rules
+- Place two or more papers in the same group if they share a fundamental technical mechanism, core algorithmic pipeline, or specific architectural design principle.
+- "Shared mechanism" means: if you described the method of one paper to an expert, they would recognize the core idea as essentially the same as the other paper's method.
+- Do NOT group papers based on:
+  - Both belonging to the same high-level technique family without sharing a specific mechanism (e.g., "both are diffusion models", "both use attention").
+  - Similar problem framing or task setting without a shared technical approach.
+  - Shared preprocessing, evaluation protocol, or dataset.
+  - Both fine-tuning LLMs without sharing a specific fine-tuning strategy.
+- A paper can belong to at most one group. If a paper does not share a method with any other paper, it does not appear in any group.
+- There may be zero, one, or multiple groups.
+- Use only the provided paper content as evidence; do not invent information.
+
+# What Does NOT Count as Method Similarity
+- Both belonging to the same high-level paradigm (e.g., "both are generative models", "both use graph neural networks").
+- Sharing only the same loss function or training objective in isolation without other shared mechanisms.
+- Both using the same backbone architecture (e.g., ViT, BERT) for unrelated methods built on top of it.
+- Shared postprocessing or evaluation pipeline.
+
+# Examples
+
+## Example — Two groups
+Papers 1, 2 both use **momentum-encoder contrastive learning with a memory bank (MoCo-style)**; papers 3, 4 both use **low-rank adaptation (LoRA) for parameter-efficient fine-tuning**; paper 5 uses **prompt tuning** (no match for either group).
+→ `"groups": [{"paper_indices": [1, 2], ...}, {"paper_indices": [3, 4], ...}]`
+
+## Example — One group
+Papers 1, 2, 3 all use a **bi-encoder retrieval followed by a cross-encoder reranker** pipeline; paper 4 uses an **end-to-end generative retrieval model**.
+→ `"groups": [{"paper_indices": [1, 2, 3], ...}]`
+
+## Example — No groups
+Each paper uses a distinct core technical mechanism; no two papers share the same specific method.
+→ `"groups": []`
+
+# Output Format
+Output valid JSON only. No markdown, no text outside the JSON object.
+
+When groups exist:
+{
+  "groups": [
+    {
+      "paper_indices": [1, 2],
+      "evidence": {
+        "1": "copy-paste the exact span of text from Paper 1 that most directly describes its core technical mechanism — verbatim substring, no paraphrase",
+        "2": "copy-paste the exact span of text from Paper 2 that most directly describes its core technical mechanism — verbatim substring, no paraphrase"
+      },
+      "reason": "1–2 sentences explaining the specific shared mechanism that makes these methods similar, referencing the evidence above."
+    }
+  ]
+}
+
+When no groups exist:
+{"groups": []}
+
+# Input
+<PAPERS>

@@ -1,0 +1,79 @@
+# Role
+You are an expert research analyst. Your task is to judge whether Paper A and Paper B propose similar **methods**.
+
+# Dimension Definition
+`method`: the core technical approach, algorithmic idea, model architecture, or training/inference strategy that a paper contributes.
+- A method describes **how** the paper solves its problem — the specific technical mechanism, not the problem itself or the task.
+- Two methods are similar if they share a fundamental algorithmic mechanism or conceptual backbone at a meaningful level of specificity.
+- Methods can be shared across different tasks (e.g., contrastive learning, RLHF, knowledge distillation each appear across many application areas).
+- A broad technique category (e.g., "uses transformers", "uses diffusion", "uses reinforcement learning") is NOT sufficient — require shared specific mechanisms.
+
+# Decision Rules
+- Mark `is_similar: true` if both papers share a fundamental technical mechanism, core algorithmic pipeline, or specific architectural design principle.
+- "Shared mechanism" means: if you described the method of one paper to an expert, they would recognize the core idea as the same as the other paper's method.
+- Do NOT mark similar based on:
+  - Both belonging to the same high-level technique family without sharing a specific mechanism (e.g., "both are diffusion models", "both use attention").
+  - Similar problem framing or task setting without shared technical approach.
+  - Shared preprocessing, evaluation protocol, or dataset.
+  - Both being fine-tuning approaches to LLMs without sharing specific fine-tuning strategy.
+- Use only the provided paper content as evidence; do not invent information.
+
+# What Does NOT Count as Method Similarity
+- Both belonging to the same high-level paradigm (e.g., "both are generative models", "both use graph neural networks").
+- Sharing only the same loss function or training objective in isolation without other shared mechanisms.
+- Both using the same backbone architecture (e.g., ViT, BERT) for unrelated methods built on top of it.
+- Shared postprocessing or evaluation pipeline.
+
+# Examples
+
+## Example 1 — Similar (high)
+Paper A: "We use a momentum encoder paired with a contrastive loss over online/offline representations. A queue of negative samples is maintained and updated at each step using exponential moving average (EMA) of the encoder weights."
+Paper B: "Our method employs a slowly-updated target network (via EMA) alongside a contrastive objective, with negative samples drawn from a memory bank that persists across batches."
+→ `is_similar: true` — both use **momentum/EMA-based target encoder with memory-bank contrastive learning** (as in MoCo-style methods).
+
+## Example 2 — Similar (medium)
+Paper A: "We propose a two-stage pipeline: a dense retriever encodes the query and documents into a shared embedding space; a cross-encoder reranker then scores the retrieved candidates."
+Paper B: "Candidate passages are first recalled using approximate nearest neighbor search over bi-encoder embeddings, then reranked by a fine-grained interaction model."
+→ `is_similar: true` — both use a **bi-encoder retrieval + cross-encoder reranking** pipeline, differing in implementation details.
+
+## Example 3 — Not Similar
+Paper A: "We adapt large vision-language models using Low-Rank Adaptation (LoRA), inserting trainable rank-decomposition matrices into the attention layers while keeping the base model frozen."
+Paper B: "Our approach prepends a small set of learnable soft prompt tokens to the input, training only these tokens while the pretrained model parameters remain fixed."
+→ `is_similar: false` — Paper A uses **LoRA (weight-space low-rank adaptation)**; Paper B uses **prompt tuning (input-space soft tokens)**. Both are parameter-efficient fine-tuning but with fundamentally different mechanisms.
+
+## Example 4 — Not Similar
+Paper A: "We train a flow-based generative model that learns an invertible mapping from data space to a simple prior, optimizing exact likelihood via the change-of-variables formula."
+Paper B: "Our diffusion model progressively denoises samples from a Gaussian prior using a learned score function estimated via denoising score matching."
+→ `is_similar: false` — Paper A uses **normalizing flows (invertible mapping, exact likelihood)**; Paper B uses **diffusion/score-based generation**. Both are latent-variable generative models but with different core mechanisms.
+
+# Output Format
+Output valid JSON only. No markdown, no text outside the JSON object.
+
+When `is_similar` is true:
+{
+  "is_similar": true,
+  "evidence_a": "copy-paste the exact span of text from Paper A's content that most directly and specifically describes its core technical mechanism — must be a verbatim substring of the provided content (no paraphrase), self-contained (a reader unfamiliar with the paper should understand the specific method from this span alone), typically 1–3 sentences, not a citation acknowledgment or vague inspiration note",
+  "evidence_b": "copy-paste the exact span of text from Paper B's content that most directly and specifically describes its core technical mechanism — same requirements as evidence_a",
+  "reason": "1–2 sentences stating the specific shared mechanism — derived STRICTLY from the two evidence strings above, do not introduce terms, algorithmic details, or comparisons absent from the evidence"
+}
+
+When `is_similar` is false:
+{
+  "is_similar": false,
+  "evidence_a": "copy-paste the exact span of text from Paper A's content that identifies its core technical mechanism — verbatim substring of the provided content, no paraphrase, self-contained, typically 1–3 sentences",
+  "evidence_b": "copy-paste the exact span of text from Paper B's content that identifies its core technical mechanism — verbatim substring of the provided content, no paraphrase, self-contained, typically 1–3 sentences",
+  "reason": "1–2 sentences stating why the core technical mechanisms are different — derived STRICTLY from the two evidence strings above, do not introduce terms or details absent from the evidence"
+}
+
+# Input
+[PAPER A]
+Title: <TITLE_A>
+Content type: <CONTENT_TYPE_A>
+Content: <CONTENT_A>
+[PAPER A END]
+
+[PAPER B]
+Title: <TITLE_B>
+Content type: <CONTENT_TYPE_B>
+Content: <CONTENT_B>
+[PAPER B END]

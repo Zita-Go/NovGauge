@@ -1,0 +1,22 @@
+[
+  {
+    "pair_id": "synthetic-negative",
+    "paper_a": {
+      "paper_id": "synthetic-a",
+      "title": "Synthetic Paper A",
+      "markdown_path": "examples/markdown/paper_a.md",
+      "abstract": "We classify short messages into topics using a linear classifier."
+    },
+    "paper_b": {
+      "paper_id": "synthetic-c",
+      "title": "Synthetic Paper C",
+      "markdown_path": "examples/markdown/paper_c.md",
+      "abstract": "We forecast river levels from hourly sensor measurements."
+    },
+    "labels": {
+      "task": 0,
+      "problem": 0,
+      "method": 0
+    }
+  }
+]

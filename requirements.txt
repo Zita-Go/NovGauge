@@ -1,0 +1,5 @@
+# Direct runtime dependencies, pinned to the migration validation environment.
+# Python >= 3.10.
+openai==2.32.0
+requests==2.32.5
+tiktoken==0.12.0
