@@ -1,0 +1,49 @@
+[
+  {
+    "item_id": "synthetic-group",
+    "source_survey": "synthetic-source",
+    "n_papers": 3,
+    "papers": [
+      {
+        "paper_id": "synthetic-a",
+        "title": "Synthetic Paper A",
+        "markdown_path": "examples/markdown/paper_a.md",
+        "abstract": "We classify short messages into topics using a linear classifier.",
+        "paper_index": 1
+      },
+      {
+        "paper_id": "synthetic-b",
+        "title": "Synthetic Paper B",
+        "markdown_path": "examples/markdown/paper_b.md",
+        "abstract": "We classify short messages into topics using a nearest-neighbor method.",
+        "paper_index": 2
+      },
+      {
+        "paper_id": "synthetic-c",
+        "title": "Synthetic Paper C",
+        "markdown_path": "examples/markdown/paper_c.md",
+        "abstract": "We forecast river levels from hourly sensor measurements.",
+        "paper_index": 3
+      }
+    ],
+    "ground_truth": {
+      "task_groups": [
+        [
+          1,
+          2
+        ]
+      ],
+      "problem_groups": [
+        [
+          1,
+          2
+        ]
+      ],
+      "method_groups": []
+    },
+    "eval_dims": [
+      "task",
+      "problem"
+    ]
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "pair_id": "synthetic-positive",
+    "paper_a": {
+      "paper_id": "synthetic-a",
+      "title": "Synthetic Paper A",
+      "markdown_path": "examples/markdown/paper_a.md",
+      "abstract": "We classify short messages into topics using a linear classifier."
+    },
+    "paper_b": {
+      "paper_id": "synthetic-b",
+      "title": "Synthetic Paper B",
+      "markdown_path": "examples/markdown/paper_b.md",
+      "abstract": "We classify short messages into topics using a nearest-neighbor method."
+    },
+    "labels": {
+      "task": 1,
+      "problem": 1,
+      "method": 0
+    }
+  }
+]

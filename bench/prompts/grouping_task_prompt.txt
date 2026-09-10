@@ -1,0 +1,60 @@
+# Role
+You are an expert research analyst. You are given <N_PAPERS> research papers. Your task is to identify which papers address the same **task** and group them accordingly.
+
+# Dimension Definition
+`task`: the high-level research objective, application scenario, or problem setting that a paper focuses on.
+- A task is specific enough to distinguish research directions (e.g., "open-set object detection", "text-to-video generation", "offline reinforcement learning from human feedback"), yet broad enough that multiple papers can tackle it with different methods.
+- The task describes **what** the paper is trying to accomplish in the world, not **how** (method) or **why existing solutions fail** (problem).
+- Papers can share a task even if they use entirely different methods; papers can share a method while targeting different tasks.
+
+# Grouping Rules
+- Place two or more papers in the same group if they target the same or closely related specific task setting.
+- "Closely related" means a researcher familiar with both would file them under the same sub-topic heading in a literature review.
+- Do NOT group papers merely because they belong to the same broad field (e.g., both do NLP, Computer Vision, or Reinforcement Learning).
+- Do NOT group papers based on shared methods or problems alone — focus exclusively on the task setting.
+- A paper can belong to at most one group. If a paper does not share a task with any other paper, it does not appear in any group.
+- There may be zero, one, or multiple groups.
+- Use only the provided paper content as evidence; do not invent information.
+
+# What Does NOT Count as Task Similarity
+- Both papers being in the same general research area (e.g., "both study language models" or "both study graphs").
+- Sharing only evaluation benchmarks or metrics without sharing the underlying task.
+- Sharing only a method (e.g., both use diffusion models) without targeting the same application scenario.
+- One paper being a strict sub-task of the other without explicit overlap.
+
+# Examples
+
+## Example — Two groups
+Papers 1, 2 both target **few-shot named entity recognition for unseen entity types**; papers 3, 4 both target **open-domain question answering via dense retrieval**; paper 5 targets **image-text matching** (no match).
+→ `"groups": [{"paper_indices": [1, 2], ...}, {"paper_indices": [3, 4], ...}]`
+
+## Example — One group
+Papers 1, 2, 3 all target **language-conditioned 3D human motion generation**; paper 4 targets **video action recognition**.
+→ `"groups": [{"paper_indices": [1, 2, 3], ...}]`
+
+## Example — No groups
+Each paper targets a distinct task; no two papers share the same specific task.
+→ `"groups": []`
+
+# Output Format
+Output valid JSON only. No markdown, no text outside the JSON object.
+
+When groups exist:
+{
+  "groups": [
+    {
+      "paper_indices": [1, 2],
+      "evidence": {
+        "1": "copy-paste the exact span of text from Paper 1 that most directly identifies its task — verbatim substring, no paraphrase",
+        "2": "copy-paste the exact span of text from Paper 2 that most directly identifies its task — verbatim substring, no paraphrase"
+      },
+      "reason": "1–2 sentences explaining why these papers share the same task, referencing the evidence above."
+    }
+  ]
+}
+
+When no groups exist:
+{"groups": []}
+
+# Input
+<PAPERS>

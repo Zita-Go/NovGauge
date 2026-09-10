@@ -1,0 +1,61 @@
+# Role
+You are an expert research analyst. You are given <N_PAPERS> research papers. Your task is to identify which papers address the same **problem** and group them accordingly.
+
+# Dimension Definition
+`problem`: the specific technical challenge, bottleneck, limitation, or gap that a paper is trying to solve — the precise reason why existing solutions are insufficient.
+- A problem describes **why** current approaches fail or fall short, not what the paper does (method) or what it applies to (task).
+- Problems can be shared across entirely different tasks (e.g., "distribution shift at test time" affects both image classification and machine translation).
+- A broad goal or application capability (e.g., "improve accuracy", "scale to larger datasets") does NOT constitute a problem.
+- The problem must identify a concrete technical obstacle, constraint, or gap that motivates the specific contribution.
+
+# Grouping Rules
+- Place two or more papers in the same group if they address the same specific technical obstacle or bottleneck, even if they operate on different tasks or domains.
+- Do NOT group papers that only share the same task or application domain without a shared bottleneck.
+- Do NOT group papers whose problems are loosely related at a surface level but target clearly different failure modes or constraints.
+- A paper can belong to at most one group. If a paper does not share a problem with any other paper, it does not appear in any group.
+- There may be zero, one, or multiple groups.
+- Use only the provided paper content as evidence; do not invent information.
+
+# What Does NOT Count as Problem Similarity
+- Both papers improving performance on the same task without sharing the same precise bottleneck.
+- Generic claims about the research area ("LLMs are slow", "data is limited", "the model overfits").
+- Shared limitations or failure modes that neither paper explicitly attempts to solve.
+- Superficial keyword overlap (e.g., "both mention distribution shift") without real semantic alignment.
+- Both papers citing the same prior work as background motivation.
+
+# Examples
+
+## Example — Two groups
+Papers 1, 2 both address **catastrophic forgetting in sequential learning**; papers 3, 4 both address **quadratic complexity of self-attention for long sequences**; paper 5 addresses **hallucination in LLMs** (no match).
+→ `"groups": [{"paper_indices": [1, 2], ...}, {"paper_indices": [3, 4], ...}]`
+
+## Example — One group
+Papers 1, 2, 3 all address **class imbalance in training data** leading to biased predictions; paper 4 addresses **inference latency of autoregressive decoding**.
+→ `"groups": [{"paper_indices": [1, 2, 3], ...}]`
+
+## Example — No groups
+Each paper addresses a distinct technical bottleneck; no two papers share the same specific problem.
+→ `"groups": []`
+
+# Output Format
+Output valid JSON only. No markdown, no text outside the JSON object.
+
+When groups exist:
+{
+  "groups": [
+    {
+      "paper_indices": [1, 2],
+      "evidence": {
+        "1": "copy-paste the exact span of text from Paper 1 that most directly states the technical problem it addresses — verbatim substring, no paraphrase",
+        "2": "copy-paste the exact span of text from Paper 2 that most directly states the technical problem it addresses — verbatim substring, no paraphrase"
+      },
+      "reason": "1–2 sentences explaining why these papers address the same specific bottleneck, referencing the evidence above."
+    }
+  ]
+}
+
+When no groups exist:
+{"groups": []}
+
+# Input
+<PAPERS>

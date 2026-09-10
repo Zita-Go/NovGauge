@@ -1,0 +1,40 @@
+# Local credentials and machine settings
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.vscode/
+.idea/
+.DS_Store
+
+# Local datasets, paper content, caches, and evaluation outputs
+/data/
+/papers/
+/markdown/
+/output/
+/results/
+/bench/output/
+/bench/results*/
+/bench/evaluation/data/
+/bench/evaluation/markdown/
+/bench/evaluation/results*/
+*.pdf
+*.zip
+*.tar
+*.gz
+*.log
+*.bak
+*.backup
+
+# Python environments and generated artifacts
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+coverage.xml
+.coverage
